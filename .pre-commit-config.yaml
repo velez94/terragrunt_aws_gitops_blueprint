@@ -1,0 +1,24 @@
+
+repos:
+#  - repo: https://github.com/antonbabenko/pre-commit-terraform
+#    rev: v1.88.4  # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+#    hooks:
+#      # args: ["--output-file", "README.md"]
+#      - id: terraform_tfsec
+#      - id: terraform_checkov
+#      - id: terraform_fmt
+#        args:
+#          - --args=-no-color
+#          - --args=-diff
+#          - --args=-write=true
+
+- repo: https://github.com/gruntwork-io/pre-commit
+  rev: v0.1.23 # Get the latest from: https://github.com/gruntwork-io/pre-commit/releases
+  hooks:
+    - id: terragrunt-hclfmt
+    - id: terraform-fmt
+    - id: terraform-validate
+    - id: tflint
+    - id: shellcheck
+    - id: gofmt
+    - id: golint
