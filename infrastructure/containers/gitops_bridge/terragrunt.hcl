@@ -19,10 +19,11 @@ dependency "eks" {
     cluster_endpoint = "dummy_cluster_endpoint"
     cluster_certificate_authority_data = "dummy_cluster_certificate_authority_data"
     cluster_version = "1.31"
+    cluster_platform_version = "1.31"
+    oidc_provider_arn =  "dummy_arn"
   }
   mock_outputs_merge_strategy_with_state = "shallow"
 }
-
 locals {
   # Define parameters for each workspace
   env = {

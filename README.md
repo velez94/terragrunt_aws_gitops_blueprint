@@ -161,3 +161,6 @@ Note: This flow ensures a consistent and automated approach to managing both inf
    - Purpose: Manages platform-level GitOps deployments across multiple clusters
 
 Both ApplicationSets are configured to target clusters with the "environment: control-plane" label and are set up for automated synchronization with their respective Git repositories.
+
+<!-- BEGIN_TF_DOCS -->
+<!-- END_TF_DOCS -->

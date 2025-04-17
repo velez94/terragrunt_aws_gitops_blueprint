@@ -26,7 +26,7 @@ locals {
     default = {
       create       = false
       cluster_name = "${include.root.locals.common_vars.locals.project}-${include.root.locals.environment.locals.workspace}-hub"
-      cluster_version = "1.31"
+      cluster_version = "1.32"
 
       # Optional
       cluster_endpoint_public_access = true

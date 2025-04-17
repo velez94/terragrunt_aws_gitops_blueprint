@@ -1,17 +1,19 @@
 <!-- BEGIN_TF_DOCS -->
 
-# VPC Resources
-This file creates a custom VPC from aws public Repository based on **terraform-aws-modules/vpc/aws**
+
+# Stack vpc
+This file creates a vpc based on **terraform-aws-modules/vpc/aws**
+
 ## Source Module info
- - **version**: = "5.0.0"
- - **Link**:  [terraform-aws-modules/vpc/aws](https://github.com/terraform-aws-modules/terraform-aws-vpc)
+- **version**: = "5.0.0"
+- **Link**: [terraform-aws-modules/vpc/aws](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/5.0.0)
 
 ## Code Dependencies Graph
 <center>
 
-![Graph](./graph.svg)
+   ![Graph](./graph.svg)
 
-##### **Dependency Graph**
+  ##### **Dependency Graph**
 
 </center>
 
@@ -20,9 +22,8 @@ This file creates a custom VPC from aws public Repository based on **terraform-a
 ## Example parameter options for each environment
 
 ```hcl
-
 include "root" {
-  path = find_in_parent_folders()
+  path = find_in_parent_folders("root.hcl")
   expose = true
 }
 
@@ -35,12 +36,12 @@ locals {
       cidr                                 = "10.10.0.0/16"
       enable_dns_hostnames                 = true
       enable_dns_support                   = true
-      azs                                  = ["us-east-2a", "us-east-2b"]#data.aws_availability_zones.azs.zone_ids
-      public_subnets                       = ["10.10.1.0/24", "10.10.2.0/24"]
-      private_subnets                      = ["10.10.3.0/24", "10.10.4.0/24"]
-      database_subnets                     = ["10.10.5.0/24", "10.10.6.0/24"]
+      azs                                  = ["us-east-2a", "us-east-2b","us-east-2c"]#data.aws_availability_zones.azs.zone_ids
+      public_subnets                       = ["10.10.1.0/24", "10.10.2.0/24", "10.10.7.0/24"]
+      private_subnets                      = ["10.10.3.0/24", "10.10.4.0/24", "10.10.8.0/24"]
+      database_subnets                     = ["10.10.5.0/24", "10.10.6.0/24", "10.10.9.0/24"]
       map_public_ip_on_launch = true
-      enable_nat_gateway                   = false
+      enable_nat_gateway                   = true
       single_nat_gateway                   = true
       one_nat_gateway_per_az               = false
       enable_vpn_gateway                   = false

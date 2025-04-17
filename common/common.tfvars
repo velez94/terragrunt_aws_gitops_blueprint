@@ -3,11 +3,11 @@
 # Access profile in your IDE env or pipeline the IAM user to use for deployment."
 profile = {
   default = {
-    profile = "labvel-dev"
+    profile = "labvel-devsecops"
     region  = "us-east-2"
   }
   "dev" = {
-    profile = "labvel-dev"
+    profile = "labvel-devsecops"
     region  = "us-east-2"
   }
 }
