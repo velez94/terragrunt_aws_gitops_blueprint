@@ -6,7 +6,46 @@
 */
 locals {
   kms_id = var.kms_key_id == null && var.create_kms ? module.kms.key_id : var.kms_key_id
+    # Convert input IDs to proper ARNs
+
+
 }
+
+locals {
+  # Get the management account ID
+  management_account_id = data.aws_organizations_organization.current.master_account_id
+
+  # Determine the type of principal
+  get_principal_type = {
+    for principal in var.sharing_principals :
+    principal => (
+      startswith(principal, "arn:aws:") ? "arn" : (
+        length(regexall("^ou-[a-z0-9]{4,32}-[a-z0-9]{8,32}$", principal)) > 0 ? "ou" : (
+          length(regexall("^o-[a-z0-9]{10,32}$", principal)) > 0 ? "org" : "account"
+        )
+      )
+    )
+  }
+
+  # Conversion rules for each type
+  convert_to_arn = {
+    arn     = { for p in var.sharing_principals : p => p if startswith(p, "arn:aws:") }
+    # Correct OU ARN format for RAM
+    ou      = { for p in var.sharing_principals : p => "arn:aws:organizations::${local.management_account_id}:ou/${data.aws_organizations_organization.current.id}/${p}"
+                if length(regexall("^ou-[a-z0-9]{4,32}-[a-z0-9]{8,32}$", p)) > 0 }
+    # Organization ARN format
+    org     = { for p in var.sharing_principals : p => "arn:aws:organizations::${local.management_account_id}:organization/${p}"
+                if length(regexall("^o-[a-z0-9]{10,32}$", p)) > 0 }
+    account = { for p in var.sharing_principals : p => p if length(regexall("^\\d{12}$", p)) > 0 }
+  }
+
+  principal_arns = [
+    for principal in var.sharing_principals :
+      local.convert_to_arn[local.get_principal_type[principal]][principal]
+  ]
+}
+
+
 # module CMK
 module "kms" {
   create                  = var.create_kms
@@ -68,17 +107,17 @@ resource "aws_ram_resource_association" "parameter_association" {
 
   lifecycle {
     precondition {
-      condition     = length(var.sharing_principals) > 0 || length(var.sharing_ou_ids) > 0
+      condition     = length(var.sharing_principals) > 0
       error_message = "At least one sharing principal must be specified when sharing is enabled"
     }
   }
 }
 
 resource "aws_ram_principal_association" "parameter_principal_association" {
-  for_each           = var.enable_sharing ? toset(var.sharing_principals) : []
+  for_each           = var.enable_sharing ? toset(local.principal_arns) : []
   principal          = each.value
   resource_share_arn = aws_ram_resource_share.parameter_share[0].arn
-
+/*
   lifecycle {
     precondition {
       condition = (
@@ -89,4 +128,6 @@ resource "aws_ram_principal_association" "parameter_principal_association" {
       error_message = "Invalid principal format. Must be either a 12-digit AWS account ID, Organization ARN, or Organizational Unit ARN"
     }
   }
+
+ */
 }

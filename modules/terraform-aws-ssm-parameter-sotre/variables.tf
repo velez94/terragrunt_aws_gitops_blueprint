@@ -73,7 +73,7 @@ variable "tags" {
 variable "overwrite" {
   description = "Overwrite an existing parameter"
   type        = bool
-  default     = false
+  default     = true
 }
 ##################################################################################
 # SSM Parameter Sharing using RAM
@@ -102,9 +102,4 @@ variable "allow_external_principals" {
   default     = false
 }
 
-variable "sharing_ou_ids" {
-  description = "List of AWS Organization OU ARNs to share the parameter with"
-  type        = list(string)
-  default     = []
-}
 

@@ -1,3 +1,27 @@
+<!-- BEGIN_TF_DOCS -->
+
+
+# Stack parameter\_store
+This file creates a parameter\_store based on **../../../modules/terraform-aws-ssm-parameter-sotre**
+
+## Source Module info
+- **version**: = "latest"
+- **Link**: [../../../modules/terraform-aws-ssm-parameter-sotre](github.com/../../../modules/terraform-aws-ssm-parameter-sotre)
+
+## Code Dependencies Graph
+<center>
+
+   ![Graph](./graph.svg)
+
+  ##### **Dependency Graph**
+
+</center>
+
+---
+
+## Example parameter options for each environment
+
+```hcl
 #parameter_store-terragrunt.hcl
 
 include "root" {
@@ -69,3 +93,5 @@ inputs = {
   tags = local.workspace["tags"]
 
 }
+```
+<!-- END_TF_DOCS -->

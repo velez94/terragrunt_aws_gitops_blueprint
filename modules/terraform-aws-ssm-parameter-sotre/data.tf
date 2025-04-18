@@ -37,7 +37,7 @@ data "aws_iam_policy_document" "kms_policy" {
       test     = "StringLike"
       variable = "aws:PrincipalOrgPaths"
       values   = [
-        for ou in var.sharing_ou_ids :
+        for ou in var.sharing_principals :
         "${data.aws_organizations_organization.current.id}/*/${ou}/*"
       ]
     }
