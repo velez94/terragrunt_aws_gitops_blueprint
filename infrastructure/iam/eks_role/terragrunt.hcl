@@ -46,16 +46,19 @@ locals {
 
 
 terraform {
-  source = "tfr:///terraform-aws-modules/iam/aws//modules/iam-eks-role?version=5.55.0"
+  #source = "tfr:///terraform-aws-modules/iam/aws//modules/iam-eks-role?version=5.55.0"
+  source = "../../../modules/terraform-aws-irsa-eks-hub"
 
 }
 
 inputs = {
-   role_name = "${local.workspace["role_name"]}-${local.workspace["environment"]}"
+  role_name = "${local.workspace["role_name"]}-${local.workspace["environment"]}"
 
   cluster_service_accounts = {
     "${dependency.eks.outputs.cluster_name}" = [
-      "argocd:argocd-*",
+      "argocd:argocd-application-controller",
+      "argocd:argo-cd-argocd-repo-server",
+      "argocd:argocd-server",
     ]
   }
   tags = local.workspace["tags"]
