@@ -24,6 +24,14 @@ dependency "eks" {
   }
   mock_outputs_merge_strategy_with_state = "shallow"
 }
+dependency "eks_role" {
+  config_path = "${get_parent_terragrunt_dir("root")}/infrastructure/iam/eks_role"
+  mock_outputs = {
+    iam_role_arn = "arn::..."
+  }
+  mock_outputs_merge_strategy_with_state = "shallow"
+
+}
 locals {
   # Define parameters for each workspace
   env = {
@@ -48,7 +56,7 @@ locals {
         addons = file("./bootstrap/addons.yaml")
         #workloads = file("./bootstrap/workloads.yaml")
       }
-
+      
       tags = {
         Environment = "control-plane"
         Layer       = "Networking"
@@ -89,6 +97,73 @@ inputs = {
 
   }
   apps = local.workspace["argocd_apps"]
+  argocd = {
+    namespace = "argocd"
+    #set = [
+    #  {
+    #    name  = "server.service.type"
+    #    value = "LoadBalancer"
+    #  }
+    #]
+    values = [
+      yamlencode(
+        {
+          configs = {
+            params = {
+              "server.insecure" = true
+            }
+          }
+          server = {
+            "serviceAccount" = {
+              annotations = {
+                "eks.amazonaws.com/role-arn" = dependency.eks_role.outputs.iam_role_arn
+              }
+
+            }
+            service = {
+              type = "NodePort"
+            }
+
+            ingress = {
+              enabled    = false
+              controller = "aws"
+              ingressClassName : "alb"
+
+
+              aws = {
+                serviceType : "NodePort"
+              }
+
+              annotations = {
+                #"alb.ingress.kubernetes.io/backend-protocol" = "HTTPS"
+                #"alb.ingress.kubernetes.io/ssl-redirect"                       = "443"
+                #"service.beta.kubernetes.io/aws-load-balancer-type"            = "external"
+                #"service.beta.kubernetes.io/aws-load-balancer-nlb-target-type" = "ip"
+                #"alb.ingress.kubernetes.io/listen-ports" : "[{\"HTTPS\":443}]"
+              }
+            }
+          }
+          controller = {
+            "serviceAccount" = {
+              annotations = {
+                "eks.amazonaws.com/role-arn" =  dependency.eks_role.outputs.iam_role_arn
+              }
+
+            }
+          }
+          repoServer = {
+            "serviceAccount" = {
+              annotations = {
+                "eks.amazonaws.com/role-arn" =  dependency.eks_role.outputs.iam_role_arn
+              }
+
+            }
+          }
+        }
+      )
+    ]
+
+  }
 
   tags = local.workspace["tags"]
 
