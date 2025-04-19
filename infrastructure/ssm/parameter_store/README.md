@@ -38,6 +38,7 @@ dependency "eks" {
     cluster_version = "1.31"
     cluster_platform_version = "1.31"
     oidc_provider_arn =  "dummy_arn"
+    cluster_arn = "arn:aws:eks:us-east-2:105171185823:cluster/gitops-scale-dev-hub"
   }
   mock_outputs_merge_strategy_with_state = "shallow"
 }
@@ -88,7 +89,8 @@ inputs = {
     cluster_certificate_authority_data = dependency.eks.outputs.cluster_certificate_authority_data,
     cluster_version                    = dependency.eks.outputs.cluster_version,
     cluster_platform_version           = dependency.eks.outputs.cluster_platform_version,
-    oidc_provider_arn                  = dependency.eks.outputs.oidc_provider_arn
+    oidc_provider_arn                  = dependency.eks.outputs.oidc_provider_arn,
+    hub_account_id = split(":", dependency.eks.outputs.cluster_arn)[4]
   }  )
   tags = local.workspace["tags"]
 

@@ -1,12 +1,12 @@
 <!-- BEGIN_TF_DOCS -->
 
 
-# Stack
-This file creates a  based on **terraform-aws-modules/iam/aws//modules/iam-eks-role**
+# Stack eks\_role
+This file creates a eks\_role based on **../../../modules/terraform-aws-irsa-eks-hub**
 
 ## Source Module info
-- **version**: = "5.55.0"
-- **Link**: [terraform-aws-modules/iam/aws//modules/iam-eks-role](https://registry.terraform.io/modules/terraform-aws-modules/iam/aws//modules/iam-eks-role/5.55.0)
+- **version**: = "latest"
+- **Link**: [../../../modules/terraform-aws-irsa-eks-hub](github.com/../../../modules/terraform-aws-irsa-eks-hub)
 
 ## Code Dependencies Graph
 <center>
@@ -48,7 +48,7 @@ locals {
     default = {
 
       environment  = "control-plane"
-      role_name    = "eks-role-control-plane-hub"
+      role_name    = "eks-role-hub"
       tags = {
         Environment = "control-plane"
         Layer       = "Networking"
@@ -70,16 +70,19 @@ locals {
 
 
 terraform {
-  source = "tfr:///terraform-aws-modules/iam/aws//modules/iam-eks-role?version=5.55.0"
+  #source = "tfr:///terraform-aws-modules/iam/aws//modules/iam-eks-role?version=5.55.0"
+  source = "../../../modules/terraform-aws-irsa-eks-hub"
 
 }
 
 inputs = {
-   role_name = "${local.workspace["role_name"]}-${local.workspace["environment"]}"
+  role_name = "${local.workspace["role_name"]}-${local.workspace["environment"]}"
 
   cluster_service_accounts = {
     "${dependency.eks.outputs.cluster_name}" = [
-      "argocd:argocd-*",
+      "argocd:argocd-application-controller",
+      "argocd:argo-cd-argocd-repo-server",
+      "argocd:argocd-server",
     ]
   }
   tags = local.workspace["tags"]
