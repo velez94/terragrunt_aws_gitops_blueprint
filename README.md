@@ -17,7 +17,16 @@ Key features of this blueprint include:
 ```
 terragrunt_aws_gitops_blueprint/
 ├── common/
+│   ├── additional_providers/
+│   │   ├── provider_k8s_helm.hcl
+│   │   └── provider_kubectl.hcl
+│   ├── common.hcl
+│   ├── common.tfvars
+│   ├── environment.hcl
 │   └── variables.tf
+├── docs/
+│   ├── diagram_architecture.png
+│   └── graph.svg
 ├── infrastructure/
 │   ├── containers/
 │   │   ├── eks_control_plane/
@@ -28,10 +37,16 @@ terragrunt_aws_gitops_blueprint/
 │   │       │   └── platform.yaml
 │   │       ├── data.tf
 │   │       └── outputs.tf
-│   └── network/
-│       └── vpc/
-│           └── README.md
-└── README.md
+│   ├── network/
+│   │   └── vpc/
+│   │       └── README.md
+│   ├── iam/
+│   │   └── eks_role/
+│   └── ssm/
+│       └── parameter_store/
+└── modules/
+    ├── terraform-aws-irsa-eks-hub/
+    └── terraform-aws-ssm-parameter-store/
 ```
 
 Key components:
