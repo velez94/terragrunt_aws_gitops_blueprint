@@ -24,7 +24,7 @@ locals {
     default = {
 
       environment  = "control-plane"
-      role_name    = "eks-role-control-plane-hub"
+      role_name    = "eks-role-hub"
       tags = {
         Environment = "control-plane"
         Layer       = "Networking"

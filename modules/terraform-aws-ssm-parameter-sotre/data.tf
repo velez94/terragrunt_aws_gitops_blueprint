@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "kms_policy" {
     }
 
     condition {
-      test     = "StringLike"
+      test     = "ForAnyValue:StringLike"
       variable = "aws:PrincipalOrgPaths"
       values   = [
         for ou in var.sharing_principals :
