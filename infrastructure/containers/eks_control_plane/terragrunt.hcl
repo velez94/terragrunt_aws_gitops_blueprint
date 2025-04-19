@@ -33,6 +33,25 @@ locals {
 
       # Optional: Adds the current caller identity as an administrator via cluster access entry
       enable_cluster_creator_admin_permissions = true
+      access_entries = {
+    #####################################################################################################################
+    # Admin installation and setup for spoke accounts - Demo purpose- must be the ci Agent Role
+    ####################################################################################################################
+    admins_sso = {
+      kubernetes_groups = []
+      principal_arn = "arn:aws:sts::571340586587:role/aws-reserved/sso.amazonaws.com/us-east-2/AWSReservedSSO_AWSAdministratorAccess_877fe9e4127a368d"
+      user_name     = "arn:aws:sts::571340586587:assumed-role/AWSReservedSSO_AWSAdministratorAccess_877fe9e4127a368d/{{SessionName}}"
+
+      policy_associations = {
+        single = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+  }
 
       cluster_compute_config = {
         enabled = true
@@ -79,6 +98,8 @@ inputs = {
 
   vpc_id = dependency.vpc.outputs.vpc_id
   subnet_ids = dependency.vpc.outputs.private_subnets
+  access_entries = local.workspace["access_entries"]
+
 
   tags = {
     Environment = include.root.locals.environment.locals.workspace
