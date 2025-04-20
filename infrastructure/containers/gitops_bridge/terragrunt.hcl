@@ -1,6 +1,6 @@
 #eks_control_plane-terragrunt.hcl
 include "root" {
-  path = find_in_parent_folders("root.hcl")
+  path   = find_in_parent_folders("root.hcl")
   expose = true
 }
 
@@ -15,12 +15,12 @@ include "k8s_helm_provider" {
 dependency "eks" {
   config_path = "${get_parent_terragrunt_dir("root")}/infrastructure/containers/eks_control_plane"
   mock_outputs = {
-    cluster_name = "dummy-cluster-name"
-    cluster_endpoint = "dummy_cluster_endpoint"
+    cluster_name                       = "dummy-cluster-name"
+    cluster_endpoint                   = "dummy_cluster_endpoint"
     cluster_certificate_authority_data = "dummy_cluster_certificate_authority_data"
-    cluster_version = "1.31"
-    cluster_platform_version = "1.31"
-    oidc_provider_arn =  "dummy_arn"
+    cluster_version                    = "1.31"
+    cluster_platform_version           = "1.31"
+    oidc_provider_arn                  = "dummy_arn"
   }
   mock_outputs_merge_strategy_with_state = "shallow"
 }
@@ -37,7 +37,7 @@ locals {
   env = {
     default = {
 
-      environment  = "control-plane"
+      environment = "control-plane"
       oss_addons = {
         enable_argo_workflows = true
         #enable_foo            = true
@@ -48,7 +48,7 @@ locals {
         {
           addons_repo_url      = "https://github.com/gitops-bridge-dev/gitops-bridge-argocd-control-plane-template"
           addons_repo_basepath = ""
-          addons_repo_path     ="bootstrap/control-plane/addons"
+          addons_repo_path     = "bootstrap/control-plane/addons"
           addons_repo_revision = "HEAD"
         }
       )
@@ -56,7 +56,7 @@ locals {
         addons = file("./bootstrap/addons.yaml")
         #workloads = file("./bootstrap/workloads.yaml")
       }
-      
+
       tags = {
         Environment = "control-plane"
         Layer       = "Networking"
@@ -73,7 +73,7 @@ locals {
   }
   # Merge parameters
   environment_vars = contains(keys(local.env), include.root.locals.environment.locals.workspace) ? include.root.locals.environment.locals.workspace : "default"
-  workspace = merge(local.env["default"], local.env[local.environment_vars])
+  workspace        = merge(local.env["default"], local.env[local.environment_vars])
 }
 
 
@@ -90,10 +90,10 @@ inputs = {
   cluster_certificate_authority_data = dependency.eks.outputs.cluster_certificate_authority_data
 
   cluster = {
-    cluster_name =   dependency.eks.outputs.cluster_name
+    cluster_name = dependency.eks.outputs.cluster_name
     environment  = local.workspace["environment"]
     metadata     = local.workspace["addons_metadata"]
-    addons = merge(local.workspace["oss_addons"], { kubernetes_version = dependency.eks.outputs.cluster_version })
+    addons       = merge(local.workspace["oss_addons"], { kubernetes_version = dependency.eks.outputs.cluster_version })
 
   }
   apps = local.workspace["argocd_apps"]
@@ -146,7 +146,7 @@ inputs = {
           controller = {
             "serviceAccount" = {
               annotations = {
-                "eks.amazonaws.com/role-arn" =  dependency.eks_role.outputs.iam_role_arn
+                "eks.amazonaws.com/role-arn" = dependency.eks_role.outputs.iam_role_arn
               }
 
             }
@@ -154,7 +154,7 @@ inputs = {
           repoServer = {
             "serviceAccount" = {
               annotations = {
-                "eks.amazonaws.com/role-arn" =  dependency.eks_role.outputs.iam_role_arn
+                "eks.amazonaws.com/role-arn" = dependency.eks_role.outputs.iam_role_arn
               }
 
             }

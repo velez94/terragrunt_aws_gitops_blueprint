@@ -1,21 +1,21 @@
 #eks_control_plane-terragrunt.hcl
 include "root" {
-  path = find_in_parent_folders("root.hcl")
+  path   = find_in_parent_folders("root.hcl")
   expose = true
 }
 dependency "vpc" {
-  config_path  = "${get_parent_terragrunt_dir("root")}/infrastructure/network/vpc"
+  config_path = "${get_parent_terragrunt_dir("root")}/infrastructure/network/vpc"
   mock_outputs = {
-    vpc_id         = "vpc-04e3e1e302f8c8f06"
+    vpc_id = "vpc-04e3e1e302f8c8f06"
     public_subnets = [
       "subnet-0e4c5aedfc2101502",
       "subnet-0d5061f70b69eda14",
     ]
-     private_subnets                             = [
-     "subnet-0e4c5aedfc2101502",
+    private_subnets = [
+      "subnet-0e4c5aedfc2101502",
       "subnet-0d5061f70b69eda14",
       "subnet-0d5061f70b69eda15",
-     ]
+    ]
   }
   mock_outputs_merge_strategy_with_state = "shallow"
 }
@@ -24,8 +24,8 @@ locals {
   # Define parameters for each workspace
   env = {
     default = {
-      create       = false
-      cluster_name = "${include.root.locals.common_vars.locals.project}-${include.root.locals.environment.locals.workspace}-hub"
+      create          = false
+      cluster_name    = "${include.root.locals.common_vars.locals.project}-${include.root.locals.environment.locals.workspace}-hub"
       cluster_version = "1.32"
 
       # Optional
@@ -34,27 +34,27 @@ locals {
       # Optional: Adds the current caller identity as an administrator via cluster access entry
       enable_cluster_creator_admin_permissions = true
       access_entries = {
-    #####################################################################################################################
-    # Admin installation and setup for spoke accounts - Demo purpose- must be the ci Agent Role
-    ####################################################################################################################
-    admins_sso = {
-      kubernetes_groups = []
-      principal_arn = "arn:aws:sts::571340586587:role/aws-reserved/sso.amazonaws.com/us-east-2/AWSReservedSSO_AWSAdministratorAccess_877fe9e4127a368d"
-      user_name     = "arn:aws:sts::571340586587:assumed-role/AWSReservedSSO_AWSAdministratorAccess_877fe9e4127a368d/{{SessionName}}"
+        #####################################################################################################################
+        # Admin installation and setup for spoke accounts - Demo purpose- must be the ci Agent Role
+        ####################################################################################################################
+        admins_sso = {
+          kubernetes_groups = []
+          principal_arn     = "arn:aws:sts::571340586587:role/aws-reserved/sso.amazonaws.com/us-east-2/AWSReservedSSO_AWSAdministratorAccess_877fe9e4127a368d"
+          user_name         = "arn:aws:sts::571340586587:assumed-role/AWSReservedSSO_AWSAdministratorAccess_877fe9e4127a368d/{{SessionName}}"
 
-      policy_associations = {
-        single = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-          access_scope = {
-            type = "cluster"
+          policy_associations = {
+            single = {
+              policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+              access_scope = {
+                type = "cluster"
+              }
+            }
           }
         }
       }
-    }
-  }
 
       cluster_compute_config = {
-        enabled = true
+        enabled    = true
         node_pools = ["general-purpose"]
       }
 
@@ -73,8 +73,8 @@ locals {
     }
   }
   # Merge parameters
-  environment_vars = contains(keys(local.env), include.root.locals.environment.locals.workspace) ?  include.root.locals.environment.locals.workspace : "default"
-  workspace = merge(local.env["default"], local.env[local.environment_vars])
+  environment_vars = contains(keys(local.env), include.root.locals.environment.locals.workspace) ? include.root.locals.environment.locals.workspace : "default"
+  workspace        = merge(local.env["default"], local.env[local.environment_vars])
 }
 
 
@@ -84,8 +84,8 @@ terraform {
 }
 
 inputs = {
-  create= local.workspace["create"]
-  cluster_name = local.workspace["cluster_name"]
+  create          = local.workspace["create"]
+  cluster_name    = local.workspace["cluster_name"]
   cluster_version = local.workspace["cluster_version"]
 
   # Optional
@@ -96,8 +96,8 @@ inputs = {
 
   cluster_compute_config = local.workspace["cluster_compute_config"]
 
-  vpc_id = dependency.vpc.outputs.vpc_id
-  subnet_ids = dependency.vpc.outputs.private_subnets
+  vpc_id         = dependency.vpc.outputs.vpc_id
+  subnet_ids     = dependency.vpc.outputs.private_subnets
   access_entries = local.workspace["access_entries"]
 
 
