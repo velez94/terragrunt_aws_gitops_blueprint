@@ -1,0 +1,41 @@
+{
+  "mcpServers": {
+    "thothctl": {
+      "command": "thothctl",
+      "args": ["mcp", "server", "--stdio"],
+      "disabled": false,
+      "autoApprove": []
+    },
+    "aws-knowledge": {
+      "command": "uvx",
+      "args": ["fastmcp", "run", "https://knowledge-mcp.global.api.aws"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": []
+    },
+    "git": {
+      "command": "uvx",
+      "args": ["mcp-server-git"],
+      "timeout": 30000,
+      "disabled": false,
+      "autoApprove": []
+    },
+    "terraform": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "hashicorp/terraform-mcp-server"],
+      "disabled": false,
+      "autoApprove": []
+    },
+    "aws-diagrams": {
+      "command": "uvx",
+      "args": ["awslabs.aws-diagram-mcp-server"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
